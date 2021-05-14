@@ -359,7 +359,7 @@ std::vector<double> getVertexMGDS(const std::vector<size_t>& coarseSet)
 
 //The starting vertex, which maximizes the AVG is provided from outside to avoid consecutive
 //AVG computations in case of consecutive FPS calls with different amount of nSamples.
-//This is for testing purposes. I think FPS also should figure outevaluate the starting point itself
+//This is for testing purposes. I think FPS also should figure out the starting point itself
 std::vector<size_t> FPS(size_t startingPoint, size_t nSamples)
 {
 	if (nSamples <= 0 || (startingPoint < 0 || startingPoint > mesh->nVertices()))
@@ -378,9 +378,9 @@ std::vector<size_t> FPS(size_t startingPoint, size_t nSamples)
 	//For every chosen farthest point run a dijkstra and update correspondences.
 	for (size_t i = 1; i < nSamples; ++i)
 	{
-		const std::vector<double> geodesicResult = dijkstraPQ(farthestPoint);
+		const std::vector<double>& geodesicResult = dijkstraPQ(farthestPoint);
 		//Compare this result with distances to update correspondenses.
-		for (size_t j = 0; j <= distances.size(); ++j)
+		for (size_t j = 0; j < distances.size(); ++j)
 		{
 			if (geodesicResult[j] < distances[j])
 			{
@@ -437,8 +437,8 @@ std::vector<size_t> coarseSet()
 			}
 		}
 
-		//Take it if it is a critical point
-		if ((avgVal <  minOfNeighbours))
+		//Take it if it is a local maximum
+		if (avgVal > maxOfNeighbours)
 		{
 			samples.push_back(i);
 		}
@@ -455,7 +455,7 @@ std::vector<size_t> SPS()
 	//Augment S1 to S2 using MGDs
 	std::vector<size_t> augmentationSet;
 	double globalMax = std::numeric_limits<double>::min();
-	//Extract local maximas
+	//Extract local maxima
 	for (size_t i = 0; i < mesh->nVertices(); ++i)
 	{
 		double mgdVal = vertexMGDS[i];
